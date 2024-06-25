@@ -5,10 +5,14 @@ import { UsersModule } from './users/users.module';
 import { BuildingsModule } from './buildings/buildings.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { AssetsModule } from './assets/assets.module';
-import { ReportsModule } from './reports/reports.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { PrismaModule } from 'nestjs-prisma';
+import { BuildingReportsModule } from './reports/buildings/buildings.module';
+import { RoomReportsModule } from './reports/rooms/rooms.module';
+import { AssetReportsModule } from './reports/assets/assets.module';
+import { SettingsModule } from './settings/settings.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,8 +35,12 @@ import { PrismaModule } from 'nestjs-prisma';
     BuildingsModule,
     RoomsModule,
     AssetsModule,
-    ReportsModule,
     CloudinaryModule,
+    SettingsModule,
+    BuildingReportsModule,
+    RoomReportsModule,
+    AssetReportsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

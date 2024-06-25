@@ -10,7 +10,7 @@ const main = async () => {
     const email = process.env.SUPERADMIN_EMAIL;
     const password = process.env.SUPERADMIN_PASSWORD;
 
-    const salt = await bcrypt.genSalt();
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const exist = await prisma.user.findUnique({ where: { email } });

@@ -166,3 +166,11 @@ model ReportAsset {
   user  User  @relation(fields: [userId], references: [id])
   asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
+
+model Setting {
+  id        String   @id @default(cuid())
+  name      String
+  value     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

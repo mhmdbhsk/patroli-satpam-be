@@ -16,6 +16,7 @@ async function bootstrap() {
     .setTitle('Patroli Satpam')
     .setDescription('The Patroli Satpam API description')
     .setVersion('0.1')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -1,26 +1,56 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAssetDto } from './dto/create-asset.dto';
 import { UpdateAssetDto } from './dto/update-asset.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class AssetsService {
-  create(createAssetDto: CreateAssetDto) {
-    return 'This action adds a new asset';
+  constructor(
+    private prisma: PrismaService,
+    private cloudinary: CloudinaryService,
+  ) {}
+
+  async create(createAssetDto: CreateAssetDto) {
+    if (createAssetDto.image) {
+      const cloudinaryResponse = await this.cloudinary.uploadImage(
+        createAssetDto.image,
+      );
+      createAssetDto.image = cloudinaryResponse.secure_url;
+    }
+
+    return this.prisma.asset.create({
+      data: createAssetDto,
+    });
+  }
+
+  async update(id: string, updateAssetDto: UpdateAssetDto) {
+    if (updateAssetDto.image) {
+      const cloudinaryResponse = await this.cloudinary.uploadImage(
+        updateAssetDto.image,
+      );
+      updateAssetDto.image = cloudinaryResponse.secure_url;
+    }
+
+    return this.prisma.asset.update({
+      where: { id },
+      data: updateAssetDto,
+    });
   }
 
   findAll() {
-    return `This action returns all assets`;
+    return this.prisma.asset.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} asset`;
+  findOne(id: string) {
+    return this.prisma.asset.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: number, updateAssetDto: UpdateAssetDto) {
-    return `This action updates a #${id} asset`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} asset`;
+  remove(id: string) {
+    return this.prisma.asset.delete({
+      where: { id },
+    });
   }
 }

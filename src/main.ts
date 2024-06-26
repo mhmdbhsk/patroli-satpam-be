@@ -13,13 +13,6 @@ async function bootstrap() {
     snapshot: true,
   });
 
-  app.use(csurf());
-  app.enableCors({
-    allowedHeaders: ['content-type', 'Authorization'],
-    origin: 'http://localhost:3000',
-    credentials: true,
-  });
-
   const config = new DocumentBuilder()
     .setTitle('Patroli Satpam')
     .setDescription('The Patroli Satpam API description')
@@ -29,6 +22,13 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  await app.enableCors({
+    allowedHeaders: ['content-type', 'Authorization'],
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
+  await app.use(csurf());
 
   await app.listen(port);
 }

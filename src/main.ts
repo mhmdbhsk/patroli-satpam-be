@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import * as csurf from 'csurf';
 
 const port = process.env.PORT || 3000;
 console.log(
@@ -11,6 +12,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
+
+  app.use(csurf());
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Patroli Satpam')

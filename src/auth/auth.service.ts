@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Logger,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -27,11 +26,6 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const isPasswordValid = bcrypt.compare(hashedPassword, user.password);
-
-    Logger.log(
-      'Login request received 1',
-      `${email} ${password} ${user.password} ${isPasswordValid} ${user.id}`,
-    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');

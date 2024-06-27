@@ -19,4 +19,20 @@ export class UpdateSettingDto extends PartialType(CreateSettingDto) {
   @IsOptional()
   @IsString()
   value?: string;
+
+  @ApiPropertyOptional({
+    description: 'Description of the setting',
+    example: 'The title of the website',
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @ApiPropertyOptional({
+    description: 'Unit of the setting',
+    example: 'string',
+  })
+  @IsString()
+  @IsOptional()
+  unit?: string;
 }

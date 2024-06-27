@@ -25,7 +25,19 @@ export class RoomsService {
   }
 
   findAll() {
-    return this.prisma.room.findMany();
+    return this.prisma.room.findMany({
+      include: {
+        building: true,
+        assets: true,
+        reports: true,
+        _count: {
+          select: {
+            reports: true,
+            assets: true,
+          },
+        },
+      },
+    });
   }
 
   findOne(id: string) {

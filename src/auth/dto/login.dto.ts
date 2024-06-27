@@ -5,12 +5,18 @@ import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class LoginDto {
   @IsEmail()
   @IsNotEmpty()
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Email of the user',
+    example: process.env.SUPERADMIN_EMAIL || 'string',
+  })
   email: string;
 
   @IsString()
   @IsNotEmpty()
   @MinLength(6)
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Password of the user',
+    example: process.env.SUPERADMIN_PASSWORD || 'string',
+  })
   password: string;
 }

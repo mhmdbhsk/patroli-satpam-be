@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class CreateSettingDto {
   @ApiProperty({
@@ -15,4 +15,19 @@ export class CreateSettingDto {
   })
   @IsString()
   value: string;
+
+  @ApiProperty({
+    description: 'Description of the setting',
+    example: 'The title of the website',
+  })
+  @IsString()
+  description: string;
+
+  @ApiProperty({
+    description: 'Unit of the setting',
+    example: 'string',
+  })
+  @IsString()
+  @IsOptional()
+  unit: string;
 }

@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { CreateReportBuildingDto } from './dto/create-report-building.dto';
 import { UpdateReportBuildingDto } from './dto/update-report-building.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -7,17 +7,26 @@ import { haversine } from 'src/utils/haversine';
 
 @Injectable()
 export class BuildingReportsService {
-  private readonly allowedRadius = 5;
-
   constructor(
     private prisma: PrismaService,
     private cloudinary: CloudinaryService,
   ) {}
 
-  async create(createReportBuildingDto: CreateReportBuildingDto) {
+  async create(
+    createReportBuildingDto: CreateReportBuildingDto,
+    userId: string,
+  ) {
     const building = await this.prisma.building.findUnique({
       where: { id: createReportBuildingDto.buildingId },
     });
+    const allowedRadius = await this.prisma.setting.findFirst({
+      where: { name: 'Radius Patroli' },
+      select: { value: true },
+    });
+
+    if (!allowedRadius) {
+      throw new BadRequestException('Allowed radius setting not found');
+    }
 
     if (!building) {
       throw new BadRequestException('Building not found');
@@ -30,9 +39,12 @@ export class BuildingReportsService {
 
     const distance = haversine(reportLat, reportLon, buildingLat, buildingLon);
 
-    if (distance > this.allowedRadius) {
+    Logger.log(`Distance: ${distance}`);
+    Logger.log(`Distance: ${allowedRadius.value}`);
+
+    if (distance > Number(allowedRadius.value)) {
       throw new BadRequestException(
-        `Report location is outside the allowed radius of ${this.allowedRadius} km`,
+        `Report location is outside the allowed radius of ${allowedRadius.value} km`,
       );
     }
 
@@ -44,7 +56,7 @@ export class BuildingReportsService {
     }
 
     return this.prisma.reportBuilding.create({
-      data: createReportBuildingDto,
+      data: { ...createReportBuildingDto, userId: userId },
     });
   }
 
@@ -63,7 +75,22 @@ export class BuildingReportsService {
   }
 
   findAll() {
-    return this.prisma.reportBuilding.findMany();
+    return this.prisma.reportBuilding.findMany({
+      include: {
+        building: true,
+      },
+    });
+  }
+
+  findAllByUser() {
+    return this.prisma.reportBuilding.findMany({
+      where: {
+        userId: '1',
+      },
+      include: {
+        building: true,
+      },
+    });
   }
 
   findOne(id: string) {

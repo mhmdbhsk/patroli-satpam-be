@@ -56,7 +56,15 @@ export class UsersService {
   }
 
   findAll() {
-    return this.prisma.user.findMany();
+    const response = this.prisma.user.findMany();
+
+    response.then((users) => {
+      users.map((user) => {
+        delete user.password;
+      });
+    });
+
+    return response;
   }
 
   findOne(id: string) {

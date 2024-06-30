@@ -9,6 +9,9 @@ import {
   UploadedFile,
   Get,
   UseGuards,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
@@ -28,12 +31,22 @@ export class UsersController {
   @ApiBody({ type: CreateUserDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  create(
+  async create(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    createUserDto.image = image;
-    return this.usersService.create(createUserDto);
+    try {
+      createUserDto.image = image;
+      return this.usersService.create(createUserDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException('An error occurred during user creation');
+      }
+    }
   }
 
   @Patch(':id')
@@ -42,33 +55,69 @@ export class UsersController {
   @ApiBody({ type: UpdateUserDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    updateUserDto.image = image;
-    return this.usersService.update(id, updateUserDto);
+    try {
+      updateUserDto.image = image;
+      return this.usersService.update(id, updateUserDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException('An error occurred during user update');
+      }
+    }
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    try {
+      return this.usersService.findAll();
+    } catch (error) {
+      throw new BadRequestException('An error occurred while fetching users');
+    }
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return this.usersService.findOne(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while fetching the user',
+        );
+      }
+    }
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  async remove(@Param('id') id: string) {
+    try {
+      return this.usersService.remove(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while deleting the user',
+        );
+      }
+    }
   }
 }

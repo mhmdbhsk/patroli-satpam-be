@@ -9,6 +9,10 @@ import {
   UploadedFile,
   Get,
   UseGuards,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateReportBuildingDto } from './dto/create-report-building.dto';
@@ -16,6 +20,7 @@ import { UpdateReportBuildingDto } from './dto/update-report-building.dto';
 import { ApiConsumes, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { BuildingReportsService } from './buildings.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Request } from 'express';
 
 @ApiTags('Reports Building')
 @Controller('reports/building')
@@ -30,12 +35,29 @@ export class BuildingReportsController {
   @ApiBody({ type: CreateReportBuildingDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  create(
+  async create(
     @Body() createReportBuildingDto: CreateReportBuildingDto,
     @UploadedFile() image: Express.Multer.File,
+    @Req() req: Request,
   ) {
-    createReportBuildingDto.image = image;
-    return this.buildingReportsService.create(createReportBuildingDto);
+    try {
+      createReportBuildingDto.image = image;
+
+      return this.buildingReportsService.create(
+        createReportBuildingDto,
+        (req.user as any).id,
+      );
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred during report building creation',
+        );
+      }
+    }
   }
 
   @Patch(':id')
@@ -44,33 +66,73 @@ export class BuildingReportsController {
   @ApiBody({ type: UpdateReportBuildingDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateReportBuildingDto: UpdateReportBuildingDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    updateReportBuildingDto.image = image;
-    return this.buildingReportsService.update(id, updateReportBuildingDto);
+    try {
+      updateReportBuildingDto.image = image;
+      return this.buildingReportsService.update(id, updateReportBuildingDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred during report building update',
+        );
+      }
+    }
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findAll() {
-    return this.buildingReportsService.findAll();
+  async findAll() {
+    try {
+      return this.buildingReportsService.findAll();
+    } catch (error) {
+      throw new BadRequestException(
+        'An error occurred while fetching report buildings',
+      );
+    }
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.buildingReportsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return this.buildingReportsService.findOne(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while fetching the report building',
+        );
+      }
+    }
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  remove(@Param('id') id: string) {
-    return this.buildingReportsService.remove(id);
+  async remove(@Param('id') id: string) {
+    try {
+      return this.buildingReportsService.remove(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while deleting the report building',
+        );
+      }
+    }
   }
 }

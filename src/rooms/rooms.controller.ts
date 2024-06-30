@@ -9,6 +9,9 @@ import {
   UploadedFile,
   Get,
   UseGuards,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RoomsService } from './rooms.service';
@@ -28,12 +31,22 @@ export class RoomsController {
   @ApiBody({ type: CreateRoomDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  create(
+  async create(
     @Body() createRoomDto: CreateRoomDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    createRoomDto.image = image;
-    return this.roomsService.create(createRoomDto);
+    try {
+      createRoomDto.image = image;
+      return this.roomsService.create(createRoomDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException('An error occurred during room creation');
+      }
+    }
   }
 
   @Patch(':id')
@@ -42,33 +55,69 @@ export class RoomsController {
   @ApiBody({ type: UpdateRoomDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateRoomDto: UpdateRoomDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    updateRoomDto.image = image;
-    return this.roomsService.update(id, updateRoomDto);
+    try {
+      updateRoomDto.image = image;
+      return this.roomsService.update(id, updateRoomDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException('An error occurred during room update');
+      }
+    }
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findAll() {
-    return this.roomsService.findAll();
+  async findAll() {
+    try {
+      return this.roomsService.findAll();
+    } catch (error) {
+      throw new BadRequestException('An error occurred while fetching rooms');
+    }
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.roomsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return this.roomsService.findOne(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while fetching the room',
+        );
+      }
+    }
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  remove(@Param('id') id: string) {
-    return this.roomsService.remove(id);
+  async remove(@Param('id') id: string) {
+    try {
+      return this.roomsService.remove(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while deleting the room',
+        );
+      }
+    }
   }
 }

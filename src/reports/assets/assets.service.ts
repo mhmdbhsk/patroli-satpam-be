@@ -39,7 +39,16 @@ export class AssetReportsService {
   }
 
   findAll() {
-    return this.prisma.reportAsset.findMany();
+    return this.prisma.reportAsset.findMany({
+      include: {
+        user: true,
+        asset: {
+          include: {
+            room: true,
+          },
+        },
+      },
+    });
   }
 
   findOne(id: string) {

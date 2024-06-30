@@ -24,7 +24,7 @@ async function bootstrap() {
 
   await app.enableCors({
     allowedHeaders: ['content-type', 'Authorization'],
-    origin: 'http://localhost:3000',
+    origin: '*',
     credentials: true,
   });
 

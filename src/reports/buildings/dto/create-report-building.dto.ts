@@ -10,13 +10,6 @@ export class CreateReportBuildingDto {
   buildingId: string;
 
   @ApiProperty({
-    description: 'ID of the user',
-    example: 'user_123',
-  })
-  @IsString()
-  userId: string;
-
-  @ApiProperty({
     description: 'Description of the report',
     example: 'Leaky roof on the third floor',
   })

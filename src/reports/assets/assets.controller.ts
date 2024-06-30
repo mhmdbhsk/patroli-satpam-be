@@ -9,6 +9,9 @@ import {
   UploadedFile,
   Get,
   UseGuards,
+  NotFoundException,
+  BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateReportAssetDto } from './dto/create-report-asset.dto';
@@ -28,12 +31,24 @@ export class AssetReportsController {
   @ApiBody({ type: CreateReportAssetDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  create(
+  async create(
     @Body() createReportAssetDto: CreateReportAssetDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    createReportAssetDto.image = image;
-    return this.assetReportService.create(createReportAssetDto);
+    try {
+      createReportAssetDto.image = image;
+      return this.assetReportService.create(createReportAssetDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred during report asset creation',
+        );
+      }
+    }
   }
 
   @Patch(':id')
@@ -42,33 +57,73 @@ export class AssetReportsController {
   @ApiBody({ type: UpdateReportAssetDto })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateReportAssetDto: UpdateReportAssetDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    updateReportAssetDto.image = image;
-    return this.assetReportService.update(id, updateReportAssetDto);
+    try {
+      updateReportAssetDto.image = image;
+      return this.assetReportService.update(id, updateReportAssetDto);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred during report asset update',
+        );
+      }
+    }
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findAll() {
-    return this.assetReportService.findAll();
+  async findAll() {
+    try {
+      return this.assetReportService.findAll();
+    } catch (error) {
+      throw new BadRequestException(
+        'An error occurred while fetching report assets',
+      );
+    }
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findOne(@Param('id') id: string) {
-    return this.assetReportService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return this.assetReportService.findOne(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while fetching the report asset',
+        );
+      }
+    }
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  remove(@Param('id') id: string) {
-    return this.assetReportService.remove(id);
+  async remove(@Param('id') id: string) {
+    try {
+      return this.assetReportService.remove(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(error.message);
+      } else if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      } else {
+        throw new BadRequestException(
+          'An error occurred while deleting the report asset',
+        );
+      }
+    }
   }
 }

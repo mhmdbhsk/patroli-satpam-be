@@ -13,6 +13,7 @@ import { RoomReportsModule } from './reports/rooms/rooms.module';
 import { AssetReportsModule } from './reports/assets/assets.module';
 import { SettingsModule } from './settings/settings.module';
 import { AuthModule } from './auth/auth.module';
+import { GeneralModule } from './general/general.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AuthModule } from './auth/auth.module';
     RoomReportsModule,
     AssetReportsModule,
     AuthModule,
+    GeneralModule,
   ],
   controllers: [AppController],
   providers: [AppService],

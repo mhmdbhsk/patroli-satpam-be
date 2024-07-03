@@ -82,11 +82,11 @@ export class BuildingReportsService {
     });
   }
 
-  findAllByUser() {
+  findAllByUser(userId: string) {
     return this.prisma.reportBuilding.findMany({
       orderBy: { createdAt: 'desc' },
       where: {
-        userId: '1',
+        userId: userId,
       },
       include: {
         building: true,

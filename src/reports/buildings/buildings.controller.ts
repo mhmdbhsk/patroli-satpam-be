@@ -100,6 +100,19 @@ export class BuildingReportsController {
     }
   }
 
+  @Get('/user')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async findAllByUser(@Req() req: Request) {
+    try {
+      return this.buildingReportsService.findAllByUser((req.user as any).id);
+    } catch (error) {
+      throw new BadRequestException(
+        'An error occurred while fetching the report buildings',
+      );
+    }
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

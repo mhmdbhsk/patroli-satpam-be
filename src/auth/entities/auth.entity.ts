@@ -17,4 +17,7 @@ export class AuthEntity {
 
   @ApiProperty()
   image: string;
+
+  @ApiProperty()
+  role: string;
 }

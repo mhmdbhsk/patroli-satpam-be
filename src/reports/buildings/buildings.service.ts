@@ -56,7 +56,6 @@ export class BuildingReportsService {
 
     const existingReport = await this.prisma.reportBuilding.findFirst({
       where: {
-        userId: userId,
         buildingId: createReportBuildingDto.buildingId,
         createdAt: {
           gte: today,

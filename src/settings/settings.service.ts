@@ -21,7 +21,9 @@ export class SettingsService {
   }
 
   findAll() {
-    return this.prisma.setting.findMany();
+    return this.prisma.setting.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   findOne(id: string) {

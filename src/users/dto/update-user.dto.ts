@@ -37,10 +37,10 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
   @ApiPropertyOptional({
     description: 'Role of the user',
-    enum: ['admin', 'security', 'superadmin'],
+    enum: ['admin', 'security'],
     example: 'admin',
   })
   @IsOptional()
-  @IsEnum(['admin', 'security', 'superadmin'])
-  role?: 'admin' | 'security' | 'superadmin';
+  @IsEnum(['admin', 'security'])
+  role?: 'admin' | 'security';
 }

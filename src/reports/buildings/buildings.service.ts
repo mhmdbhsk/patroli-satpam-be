@@ -84,6 +84,7 @@ export class BuildingReportsService {
 
   findAllByUser() {
     return this.prisma.reportBuilding.findMany({
+      orderBy: { createdAt: 'desc' },
       where: {
         userId: '1',
       },

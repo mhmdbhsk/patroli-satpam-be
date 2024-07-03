@@ -39,7 +39,9 @@ export class BuildingsService {
   }
 
   findAll() {
-    return this.prisma.building.findMany();
+    return this.prisma.building.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   findOne(id: string) {

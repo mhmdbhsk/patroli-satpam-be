@@ -39,7 +39,9 @@ export class RoomReportsService {
   }
 
   findAll() {
-    return this.prisma.reportRoom.findMany();
+    return this.prisma.reportRoom.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   findOne(id: string) {

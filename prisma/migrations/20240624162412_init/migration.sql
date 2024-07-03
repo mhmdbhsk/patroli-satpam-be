@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('admin', 'security', 'superadmin');
+CREATE TYPE "Role" AS ENUM ('admin', 'security');
 
 -- CreateEnum
 CREATE TYPE "AssetCondition" AS ENUM ('good', 'broken');

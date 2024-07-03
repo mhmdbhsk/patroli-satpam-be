@@ -34,9 +34,9 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'Role of the user',
-    enum: ['admin', 'security', 'superadmin'],
+    enum: ['admin', 'security'],
     example: 'admin',
   })
-  @IsEnum(['admin', 'security', 'superadmin'])
-  role: 'admin' | 'security' | 'superadmin';
+  @IsEnum(['admin', 'security'])
+  role: 'admin' | 'security';
 }

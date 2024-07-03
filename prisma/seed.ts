@@ -23,11 +23,11 @@ const main = async () => {
         name: 'Superadmin FSM',
         email: email,
         password: salt + hashedPassword,
-        role: Role.superadmin,
+        role: Role.admin,
       },
     });
 
-    console.log(`Creating new superadmin account. 🚀`);
+    console.log(`Creating new admin account. 🚀`);
     console.log(`Database has been seeded. 🌱`);
   } catch (error) {
     throw error;

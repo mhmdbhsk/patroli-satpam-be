@@ -17,7 +17,6 @@ enum AssetCondition {
 enum Role {
   admin
   security
-  superadmin
 }
 
 model User {
@@ -67,14 +66,6 @@ model Session {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@id([identifier, token])
 }
 
 model Building {
@@ -131,6 +122,7 @@ model ReportBuilding {
   buildingId  String
   userId      String
   description String
+  floor       String
   image       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

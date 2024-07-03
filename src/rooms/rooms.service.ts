@@ -26,6 +26,7 @@ export class RoomsService {
 
   findAll() {
     return this.prisma.room.findMany({
+      orderBy: { createdAt: 'desc' },
       include: {
         building: true,
         assets: true,

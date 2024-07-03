@@ -39,7 +39,9 @@ export class AssetsService {
   }
 
   findAll() {
-    return this.prisma.asset.findMany();
+    return this.prisma.asset.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   findOne(id: string) {

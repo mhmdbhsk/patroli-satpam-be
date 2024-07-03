@@ -56,7 +56,9 @@ export class UsersService {
   }
 
   findAll() {
-    const response = this.prisma.user.findMany();
+    const response = this.prisma.user.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
 
     response.then((users) => {
       users.map((user) => {

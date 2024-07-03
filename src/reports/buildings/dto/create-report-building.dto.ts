@@ -16,6 +16,13 @@ export class CreateReportBuildingDto {
   @IsString()
   description: string;
 
+  @ApiProperty({
+    description: 'Floor of the building of the report',
+    example: '4',
+  })
+  @IsString()
+  floor: string;
+
   @ApiPropertyOptional({
     description: 'Image of the report',
     type: 'string',

@@ -122,6 +122,10 @@ export class BuildingReportsService {
   findOne(id: string) {
     return this.prisma.reportBuilding.findUnique({
       where: { id },
+      include: {
+        building: true,
+        user: true,
+      },
     });
   }
 

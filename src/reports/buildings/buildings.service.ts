@@ -40,11 +40,34 @@ export class BuildingReportsService {
     const distance = haversine(reportLat, reportLon, buildingLat, buildingLon);
 
     Logger.log(`Distance: ${distance}`);
-    Logger.log(`Distance: ${allowedRadius.value}`);
+    Logger.log(`Allowed Radius: ${allowedRadius.value}`);
 
     if (distance > Number(allowedRadius.value)) {
       throw new BadRequestException(
         `Report location is outside the allowed radius of ${allowedRadius.value} km`,
+      );
+    }
+
+    // Check if user already made a report today for the same building
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existingReport = await this.prisma.reportBuilding.findFirst({
+      where: {
+        userId: userId,
+        buildingId: createReportBuildingDto.buildingId,
+        createdAt: {
+          gte: today,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    if (existingReport) {
+      throw new BadRequestException(
+        `You have already made a report for this building today.`,
       );
     }
 
@@ -78,6 +101,7 @@ export class BuildingReportsService {
     return this.prisma.reportBuilding.findMany({
       include: {
         building: true,
+        user: true,
       },
     });
   }
@@ -90,6 +114,7 @@ export class BuildingReportsService {
       },
       include: {
         building: true,
+        user: true,
       },
     });
   }

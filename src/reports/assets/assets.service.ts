@@ -54,6 +54,10 @@ export class AssetReportsService {
   findOne(id: string) {
     return this.prisma.reportAsset.findUnique({
       where: { id },
+      include: {
+        asset: true,
+        user: true,
+      },
     });
   }
 

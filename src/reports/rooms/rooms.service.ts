@@ -41,12 +41,20 @@ export class RoomReportsService {
   findAll() {
     return this.prisma.reportRoom.findMany({
       orderBy: { createdAt: 'desc' },
+      include: {
+        room: true,
+        user: true,
+      },
     });
   }
 
   findOne(id: string) {
     return this.prisma.reportRoom.findUnique({
       where: { id },
+      include: {
+        room: true,
+        user: true,
+      },
     });
   }
 

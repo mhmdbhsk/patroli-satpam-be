@@ -54,22 +54,22 @@ export class BuildingReportsService {
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
 
-    const existingReport = await this.prisma.reportBuilding.findFirst({
-      where: {
-        buildingId: createReportBuildingDto.buildingId,
-        floor: createReportBuildingDto.floor,
-        createdAt: {
-          gte: today,
-          lte: endOfDay,
-        },
-      },
-    });
+    // const existingReport = await this.prisma.reportBuilding.findFirst({
+    //   where: {
+    //     buildingId: createReportBuildingDto.buildingId,
+    //     floor: createReportBuildingDto.floor,
+    //     createdAt: {
+    //       gte: today,
+    //       lte: endOfDay,
+    //     },
+    //   },
+    // });
 
-    if (existingReport) {
-      throw new BadRequestException(
-        `You have already made a report for this building today.`,
-      );
-    }
+    // if (existingReport) {
+    //   throw new BadRequestException(
+    //     `You have already made a report for this building today.`,
+    //   );
+    // }
 
     if (createReportBuildingDto.image) {
       const cloudinaryResponse = await this.cloudinary.uploadImage(

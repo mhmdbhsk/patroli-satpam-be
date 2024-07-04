@@ -6,7 +6,17 @@ export class GeneralService {
   constructor(private prisma: PrismaService) {}
 
   async getStat(date: Date) {
-    const totalBuildings = await this.prisma.building.count();
+    // Fetch all buildings and calculate the total floors
+    const buildings = await this.prisma.building.findMany({
+      select: {
+        totalFloor: true,
+      },
+    });
+    const totalBuildings = buildings.reduce(
+      (sum, building) => sum + parseInt(building.totalFloor, 10),
+      0,
+    );
+
     const totalRooms = await this.prisma.room.count();
 
     const startOfDay = new Date(date);
